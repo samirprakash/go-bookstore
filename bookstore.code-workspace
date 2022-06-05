@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "users"
+    },
+    {
+      "path": "items"
+    },
+    {
+      "path": "oauth"
+    },
+    {
+      "path": "."
+    }
+  ]
+}
