@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
 	"github.com/samirprakash/go-bookstore/users/datasources/psql/users"
 )
@@ -11,7 +13,7 @@ var (
 
 func Start() {
 	// Initialize the database
-	if err := users.DB.Ping(); err != nil {
+	if err := users.DB.Ping(context.Background()); err != nil {
 		panic(err)
 	}
 

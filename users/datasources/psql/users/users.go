@@ -1,24 +1,21 @@
 package users
 
 import (
-	"database/sql"
+	"context"
 	"log"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4"
 )
 
 var (
-	DB *sql.DB
+	DB *pgx.Conn
 )
 
 func init() {
 	var err error
-	DB, err = sql.Open("postgres", "postgres://root:secret@localhost:5432/users?sslmode=disable")
+	DB, err = pgx.Connect(context.Background(), "postgres://root:secret@localhost:5432/bookstore_users?sslmode=disable")
 	if err != nil {
-		panic(err)
-	}
-	if err := DB.Ping(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	log.Println("Successfully connected to go-bookstore-user database")
 }
