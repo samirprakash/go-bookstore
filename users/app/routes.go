@@ -9,4 +9,5 @@ func mapRoutes() {
 	router.GET("/ping", ping.Ping)
 
 	router.POST("/users", users.Create)
+	router.GET("/users/:id", users.Get)
 }
