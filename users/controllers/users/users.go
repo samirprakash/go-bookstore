@@ -14,7 +14,7 @@ import (
 func Create(c *gin.Context) {
 	var user users.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, errors.NewBadRequest("invalid json body"))
+		c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
 		return
 	}
 
@@ -31,7 +31,7 @@ func Create(c *gin.Context) {
 func Get(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, errors.NewBadRequest("invalid user id, must be a number"))
+		c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid user id, must be a number"))
 		return
 	}
 
