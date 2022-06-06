@@ -9,11 +9,20 @@ type REST struct {
 	Error   string `json:"error"`
 }
 
-// NewBadRequestError returns a new bad request error
-func NewBadRequestError(message string) *REST {
+// NewBadRequest returns a new bad request error
+func NewBadRequest(message string) *REST {
 	return &REST{
 		Message: message,
 		Status:  http.StatusBadRequest,
 		Error:   "bad_request",
+	}
+}
+
+// NewNotFound returns a new not found error
+func NewNotFound(message string) *REST {
+	return &REST{
+		Message: message,
+		Status:  http.StatusNotFound,
+		Error:   "not_found",
 	}
 }
