@@ -31,6 +31,7 @@ func GetUser(userID int64) (*users.User, *errors.REST) {
 	return &user, nil
 }
 
+// UpdateUser updates a user
 func UpdateUser(isPatch bool, user users.User) (*users.User, *errors.REST) {
 	current, err := GetUser(user.ID)
 	if err != nil {
@@ -61,4 +62,17 @@ func UpdateUser(isPatch bool, user users.User) (*users.User, *errors.REST) {
 	}
 
 	return current, nil
+}
+
+// DeleteUser deletes a user
+func DeleteUser(userID int64) *errors.REST {
+	user := users.User{
+		ID: userID,
+	}
+
+	if err := user.Delete(); err != nil {
+		return err
+	}
+
+	return nil
 }

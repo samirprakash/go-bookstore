@@ -32,12 +32,22 @@ func (user *User) Save() *errors.REST {
 	return nil
 }
 
+// Update updates an existing user in the database
 func (user *User) Update() *errors.REST {
 	updateUserQuery := `UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4 RETURNING id;`
-	r := users.DB.QueryRow(context.Background(), updateUserQuery, user.FirstName, user.LastName, user.Email, user.ID)
-	err := r.Scan(&user.ID)
+	_, err := users.DB.Exec(context.Background(), updateUserQuery, user.FirstName, user.LastName, user.Email, user.ID)
 	if err != nil {
 		return errors.NewInternalServerError(fmt.Sprintf("error updating user: %s", err.Error()))
+	}
+	return nil
+}
+
+// Delete deletes an existing user from the database
+func (user *User) Delete() *errors.REST {
+	deleteUserQuery := `DELETE FROM users WHERE id = $1;`
+	_, err := users.DB.Exec(context.Background(), deleteUserQuery, user.ID)
+	if err != nil {
+		return errors.NewInternalServerError(fmt.Sprintf("error deleting user: %s", err.Error()))
 	}
 	return nil
 }
