@@ -11,4 +11,5 @@ func mapRoutes() {
 	router.POST("/users", users.Create)
 	router.GET("/users/:id", users.Get)
 	router.PUT("/users/:id", users.Update)
+	router.PATCH("/users/:id", users.Update)
 }
