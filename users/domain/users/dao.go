@@ -31,3 +31,13 @@ func (user *User) Save() *errors.REST {
 	}
 	return nil
 }
+
+func (user *User) Update() *errors.REST {
+	updateUserQuery := `UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4 RETURNING id;`
+	r := users.DB.QueryRow(context.Background(), updateUserQuery, user.FirstName, user.LastName, user.Email, user.ID)
+	err := r.Scan(&user.ID)
+	if err != nil {
+		return errors.NewInternalServerError(fmt.Sprintf("error updating user: %s", err.Error()))
+	}
+	return nil
+}
