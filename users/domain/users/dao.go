@@ -5,29 +5,31 @@ import (
 	"fmt"
 
 	"github.com/samirprakash/go-bookstore/users/datasources/psql/users"
-	"github.com/samirprakash/go-bookstore/users/utils/date"
 	"github.com/samirprakash/go-bookstore/users/utils/errors"
 )
 
-// Get returns a user from the database
-func (user *User) Get() *errors.REST {
-	getUserQuery := `SELECT id, first_name, last_name, email, created FROM users WHERE id = $1;`
-	r := users.DB.QueryRow(context.Background(), getUserQuery, user.ID)
-	err := r.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Created)
+const (
+	StatusActive = "active"
+)
+
+// Save saves a new user to the database
+func (user *User) Save() *errors.REST {
+	insertUserQuery := `INSERT INTO users (first_name, last_name, email, created, status, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;`
+	r := users.DB.QueryRow(context.Background(), insertUserQuery, user.FirstName, user.LastName, user.Email, user.Created, user.Status, user.Password)
+	err := r.Scan(&user.ID)
 	if err != nil {
-		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
+		return errors.NewInternalServerError(fmt.Sprintf("error inserting user: %s", err.Error()))
 	}
 	return nil
 }
 
-// Save saves a new user to the database
-func (user *User) Save() *errors.REST {
-	insertUserQuery := `INSERT INTO users (first_name, last_name, email, created) VALUES ($1, $2, $3, $4) RETURNING id;`
-	user.Created = date.GetCurrentAsString()
-	r := users.DB.QueryRow(context.Background(), insertUserQuery, user.FirstName, user.LastName, user.Email, user.Created)
-	err := r.Scan(&user.ID)
+// Get returns a user from the database
+func (user *User) Get() *errors.REST {
+	getUserQuery := `SELECT id, first_name, last_name, email, created, status FROM users WHERE id = $1;`
+	r := users.DB.QueryRow(context.Background(), getUserQuery, user.ID)
+	err := r.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Created, &user.Status)
 	if err != nil {
-		return errors.NewInternalServerError(fmt.Sprintf("error inserting user: %s", err.Error()))
+		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
 	}
 	return nil
 }
@@ -50,4 +52,25 @@ func (user *User) Delete() *errors.REST {
 		return errors.NewInternalServerError(fmt.Sprintf("error deleting user: %s", err.Error()))
 	}
 	return nil
+}
+
+// FindByStatus returns a list of users by their status
+func (user *User) FindByStatus(status string) ([]User, *errors.REST) {
+	var uu []User
+	getUsersQuery := `SELECT id, first_name, last_name, email, created FROM users WHERE status = $1;`
+	rows, err := users.DB.Query(context.Background(), getUsersQuery, status)
+	if err != nil {
+		return nil, errors.NewInternalServerError(fmt.Sprintf("error getting users: %s", err.Error()))
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var u User
+		err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Created)
+		if err != nil {
+			return nil, errors.NewInternalServerError(fmt.Sprintf("error getting users: %s", err.Error()))
+		}
+		uu = append(uu, u)
+	}
+	return uu, nil
 }

@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/samirprakash/go-bookstore/users/domain/users"
+	"github.com/samirprakash/go-bookstore/users/utils/date"
 	"github.com/samirprakash/go-bookstore/users/utils/errors"
 )
 
@@ -11,6 +12,8 @@ func CreateUser(user users.User) (*users.User, *errors.REST) {
 		return nil, err
 	}
 
+	user.Created = date.GetCurrentAsString()
+	user.Status = users.StatusActive
 	if err := user.Save(); err != nil {
 		return nil, err
 	}
@@ -75,4 +78,15 @@ func DeleteUser(userID int64) *errors.REST {
 	}
 
 	return nil
+}
+
+// Search finds a user by its status
+func Search(status string) ([]users.User, *errors.REST) {
+	user := users.User{}
+	users, err := user.FindByStatus(status)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
