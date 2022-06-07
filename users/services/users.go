@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/samirprakash/go-bookstore/users/domain/users"
+	"github.com/samirprakash/go-bookstore/users/utils/crypto"
 	"github.com/samirprakash/go-bookstore/users/utils/date"
 	"github.com/samirprakash/go-bookstore/users/utils/errors"
 )
@@ -14,6 +15,8 @@ func CreateUser(user users.User) (*users.User, *errors.REST) {
 
 	user.Created = date.GetCurrentAsString()
 	user.Status = users.StatusActive
+	user.Password = crypto.GetMD5Hash(user.Password)
+
 	if err := user.Save(); err != nil {
 		return nil, err
 	}
@@ -81,7 +84,7 @@ func DeleteUser(userID int64) *errors.REST {
 }
 
 // Search finds a user by its status
-func Search(status string) ([]users.User, *errors.REST) {
+func Search(status string) (users.Users, *errors.REST) {
 	user := users.User{}
 	users, err := user.FindByStatus(status)
 	if err != nil {
