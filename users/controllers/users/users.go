@@ -18,7 +18,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	cu, rErr := services.CreateUser(user)
+	cu, rErr := services.UsersService.CreateUser(user)
 	if rErr != nil {
 		c.JSON(rErr.Status, rErr)
 		return
@@ -35,7 +35,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	user, rErr := services.GetUser(id)
+	user, rErr := services.UsersService.GetUser(id)
 	if rErr != nil {
 		c.JSON(rErr.Status, rErr)
 		return
@@ -61,7 +61,7 @@ func Update(c *gin.Context) {
 	user.ID = id
 	isPatch := c.Request.Method == http.MethodPatch
 
-	u, rErr := services.UpdateUser(isPatch, user)
+	u, rErr := services.UsersService.UpdateUser(isPatch, user)
 	if rErr != nil {
 		c.JSON(rErr.Status, rErr)
 		return
@@ -78,7 +78,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	if err := services.DeleteUser(id); err != nil {
+	if err := services.UsersService.DeleteUser(id); err != nil {
 		c.JSON(err.Status, err)
 		return
 	}
@@ -89,7 +89,7 @@ func Delete(c *gin.Context) {
 // Search handles incoming request to search for users
 func Search(c *gin.Context) {
 	status := c.Query("status")
-	users, rErr := services.Search(status)
+	users, rErr := services.UsersService.Search(status)
 	if rErr != nil {
 		c.JSON(rErr.Status, rErr)
 		return

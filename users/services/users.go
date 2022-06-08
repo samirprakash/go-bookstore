@@ -7,8 +7,22 @@ import (
 	"github.com/samirprakash/go-bookstore/users/utils/errors"
 )
 
+// UsersService is the service that handles all user related operations
+var UsersService usersServiceInterface = &usersService{}
+
+type usersService struct{}
+
+// usersServiceInterface is the interface that wraps the UsersService struct
+type usersServiceInterface interface {
+	CreateUser(users.User) (*users.User, *errors.REST)
+	GetUser(int64) (*users.User, *errors.REST)
+	UpdateUser(bool, users.User) (*users.User, *errors.REST)
+	DeleteUser(int64) *errors.REST
+	Search(string) (users.Users, *errors.REST)
+}
+
 // CreateUser creates a new user
-func CreateUser(user users.User) (*users.User, *errors.REST) {
+func (s *usersService) CreateUser(user users.User) (*users.User, *errors.REST) {
 	if err := user.Validate(); err != nil {
 		return nil, err
 	}
@@ -25,7 +39,7 @@ func CreateUser(user users.User) (*users.User, *errors.REST) {
 }
 
 // GetUser returns a user by its id
-func GetUser(userID int64) (*users.User, *errors.REST) {
+func (s *usersService) GetUser(userID int64) (*users.User, *errors.REST) {
 	user := users.User{
 		ID: userID,
 	}
@@ -38,8 +52,8 @@ func GetUser(userID int64) (*users.User, *errors.REST) {
 }
 
 // UpdateUser updates a user
-func UpdateUser(isPatch bool, user users.User) (*users.User, *errors.REST) {
-	current, err := GetUser(user.ID)
+func (s *usersService) UpdateUser(isPatch bool, user users.User) (*users.User, *errors.REST) {
+	current, err := s.GetUser(user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +85,7 @@ func UpdateUser(isPatch bool, user users.User) (*users.User, *errors.REST) {
 }
 
 // DeleteUser deletes a user
-func DeleteUser(userID int64) *errors.REST {
+func (s *usersService) DeleteUser(userID int64) *errors.REST {
 	user := users.User{
 		ID: userID,
 	}
@@ -84,7 +98,7 @@ func DeleteUser(userID int64) *errors.REST {
 }
 
 // Search finds a user by its status
-func Search(status string) (users.Users, *errors.REST) {
+func (s *usersService) Search(status string) (users.Users, *errors.REST) {
 	user := users.User{}
 	users, err := user.FindByStatus(status)
 	if err != nil {
