@@ -5,7 +5,7 @@ import "time"
 const expirationTime = time.Hour * 24
 
 type Token struct {
-	Token     string `json:"token"`
+	ID        string `json:"id"`
 	UserID    int64  `json:"user_id"`
 	ClientID  int64  `json:"client_id"`
 	ExpiresAt int64  `json:"expires_at"`
