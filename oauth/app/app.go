@@ -13,7 +13,7 @@ func Start() {
 	s := token.NewService(db.NewRepository())
 	h := http.NewTokenHandler(s)
 
-	router.GET("/oauth/token/:id", h.GetById)
+	router.GET("/oauth/token/:id", h.GetByID)
 
 	router.Run(":8080")
 }

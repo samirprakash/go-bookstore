@@ -8,7 +8,7 @@ import (
 )
 
 type TokenHandler interface {
-	GetById(*gin.Context)
+	GetByID(*gin.Context)
 }
 
 type tokenHandler struct {
@@ -21,9 +21,9 @@ func NewTokenHandler(s token.Service) TokenHandler {
 	}
 }
 
-func (h *tokenHandler) GetById(c *gin.Context) {
+func (h *tokenHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
-	t, err := h.service.GetById(id)
+	t, err := h.service.GetByID(id)
 	if err != nil {
 		c.JSON(err.Status, err)
 		return
