@@ -12,7 +12,7 @@ func TestExpirationTimeContstant(t *testing.T) {
 }
 
 func TestNewToken(t *testing.T) {
-	token := NewToken()
+	token := New()
 	assert.False(t, token.isExpired(), "token should not be expired")
 	assert.NotEmpty(t, token.ID, "token should not be empty")
 	assert.NotEmpty(t, token.UserID, "token should have a user id")
@@ -21,7 +21,7 @@ func TestNewToken(t *testing.T) {
 }
 
 func TestIsExpired(t *testing.T) {
-	token := NewToken()
+	token := New()
 	assert.False(t, token.isExpired(), "token should not be expired")
 	token.ExpiresAt = time.Now().UTC().Add(-time.Hour).Unix()
 	assert.True(t, token.isExpired(), "token should be expired")

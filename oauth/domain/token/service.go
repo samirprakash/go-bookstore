@@ -29,25 +29,23 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) GetByID(id string) (*Token, *errors.REST) {
-	t, err := s.repo.GetByID(strings.TrimSpace(id))
-	if err != nil {
-		return nil, err
+	tid := strings.TrimSpace(id)
+	if len(tid) == 0 {
+		return nil, errors.NewBadRequestError("Invalid token id")
 	}
-	return t, nil
+	return s.repo.GetByID(tid)
 }
 
 func (s *service) Create(t Token) *errors.REST {
-	err := s.repo.Create(t)
-	if err != nil {
+	if err := t.Validate(); err != nil {
 		return err
 	}
-	return nil
+	return s.repo.Create(t)
 }
 
 func (s *service) UpdateExpiration(t Token) *errors.REST {
-	err := s.repo.UpdateExpiration(t)
-	if err != nil {
+	if err := t.Validate(); err != nil {
 		return err
 	}
-	return nil
+	return s.repo.UpdateExpiration(t)
 }
