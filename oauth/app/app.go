@@ -14,6 +14,7 @@ func Start() {
 	h := http.NewTokenHandler(s)
 
 	router.GET("/oauth/token/:id", h.GetByID)
+	router.POST("/oauth/token", h.Create)
 
 	router.Run(":8080")
 }
