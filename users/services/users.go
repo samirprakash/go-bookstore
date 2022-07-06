@@ -19,6 +19,7 @@ type usersServiceInterface interface {
 	UpdateUser(bool, users.User) (*users.User, *errors.REST)
 	DeleteUser(int64) *errors.REST
 	Search(string) (users.Users, *errors.REST)
+	LoginUser(users.LoginRequest) (*users.User, *errors.REST)
 }
 
 // CreateUser creates a new user
@@ -106,4 +107,18 @@ func (s *usersService) Search(status string) (users.Users, *errors.REST) {
 	}
 
 	return users, nil
+}
+
+// LoginUser authenticates a user
+func (s *usersService) LoginUser(req users.LoginRequest) (*users.User, *errors.REST) {
+	user := &users.User{
+		Email:    req.Email,
+		Password: crypto.GetMD5Hash(req.Password),
+	}
+
+	if err := user.FindByEmailAndPassword(); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
